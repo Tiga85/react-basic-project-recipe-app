@@ -43,7 +43,7 @@
   
   .recipe-image {
     width: 100%;  /* Ensure the image fills the width of its container */
-    height: auto;
+    height: 200px;
     border-radius: 8px;
     object-fit: cover; /* Cover the container while maintaining aspect ratio */
     text-align: center; /* Center the image horizontally */
