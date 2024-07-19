@@ -1,15 +1,24 @@
-import "./RecipeListPage.css";
-import { Center, Heading, Flex  } from "@chakra-ui/react";
-import { data } from "../utils/data";
-import { useState, useEffect } from "react";
+import {
+  Center,
+  Heading,
+  Flex,
+  Box,
+  Grid,
+  GridItem,
+  VStack,
+  Image,
+  Text,
+} from "@chakra-ui/react";
+import { useState } from "react";
 import { SearchFilter } from "../components/ui/SearchFilter";
 import { DietFilter } from "../components/ui/DietFilter";
-import {VeganChoice}  from '../components/ui/VeganChoice';
+import { VeganChoice } from "../components/ui/VeganChoice";
 import { Time } from "../components/ui/Time";
+import { Copyright } from "../components/footer/Copyright";
 
 export const RecipeListPage = ({ recipes, onRecipeSelect }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [dietFilter, setDietFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dietFilter, setDietFilter] = useState("");
 
   const handleSearchQueryChange = (value) => {
     setSearchQuery(value);
@@ -28,24 +37,35 @@ export const RecipeListPage = ({ recipes, onRecipeSelect }) => {
         hit.recipe.healthLabels.some((label) =>
           label.toLowerCase().includes(lowerCaseSearchQuery)
         ));
-    
+
     const matchesDietFilter =
-      !dietFilter || 
-      (hit.recipe.healthLabels && 
-       hit.recipe.healthLabels.some((label) => label.toLowerCase() === dietFilter.toLowerCase()));
+      !dietFilter ||
+      (hit.recipe.healthLabels &&
+        hit.recipe.healthLabels.some(
+          (label) => label.toLowerCase() === dietFilter.toLowerCase()
+        ));
 
     return matchesSearchQuery && matchesDietFilter;
   });
 
   return (
-    <div>
-      <Time/>
+    <VStack spacing={8}>
+      <Time align="start" />
       <Center>
-        <Heading>Project: Recipe App</Heading>
-
+        <Heading
+          backgroundColor={"blue.100"}
+          color="darkblue"
+          borderRadius="5px"
+          py="10px"
+          textAlign="center"
+          mb="10px"
+          mt="10px"
+          border="1px solid white"
+        >
+          Project: Recipe App
+        </Heading>
       </Center>
-
-      <Center>
+      <Flex width="80%" justify="center">
         <SearchFilter
           searchQuery={searchQuery}
           onSearchQueryChange={handleSearchQueryChange}
@@ -54,50 +74,86 @@ export const RecipeListPage = ({ recipes, onRecipeSelect }) => {
           dietFilter={dietFilter}
           onDietFilterChange={handleDietFilterChange}
         />
-      </Center>
-      <div className="recipe-list-container">
+      </Flex>
+      <Grid
+        templateColumns={{
+          base: "repeat(1, 1fr)",
+          sm: "repeat(2, 1fr)",
+          md: "repeat(3, 1fr)",
+          lg: "repeat(4, 1fr)",
+          xl: "repeat(5, 1fr)",
+        }}
+        gap={6}
+      >
         {filteredRecipes.map((hit) => (
-          <div
+          <GridItem
             key={hit.recipe.label}
-            className="recipe-item"
             onClick={() => onRecipeSelect(hit.recipe)}
+            bg="gray.100"
+            boxShadow="md"
+            borderRadius="md"
+            p={5}
+            _hover={{
+              backgroundColor: "blue.500",
+              transform: "scale(1.1)",
+              transition: "all 0.2s",
+              boxShadow: "xl",
+              borderColor: "blue.500",
+              cursor: "pointer",
+            }}
           >
-            <img
-              className="recipe-image"
+            <Image
               src={hit.recipe.image}
               alt={hit.recipe.label}
+              borderRadius="md"
+              objectFit="cover"
+              h="200px"
+              w="100%"
+              maxW="400px"
+              m="auto"
             />
-            <p>
-              <strong>Meal Type:</strong>{' '}
-              {hit.recipe.mealType && hit.recipe.mealType.length > 0
-                ? hit.recipe.mealType.map((type) => type.toUpperCase()).join(', ')
-                : 'N/A'}
-            </p>
-            <div className="recipe-label">{hit.recipe.label}</div>
-            <div className="recipe-details">
-              <p>
-                <strong>Diet Label:</strong>{' '}
+            <Text fontWeight="bold" fontSize="lg" mt={2}>
+              {hit.recipe.label}
+            </Text>
+            <VStack align="start" spacing={2} mt={2}>
+              <Text>
+                <strong>Meal Type:</strong>{" "}
+                {hit.recipe.mealType && hit.recipe.mealType.length > 0
+                  ? hit.recipe.mealType
+                      .map((type) => type.toUpperCase())
+                      .join(", ")
+                  : "N/A"}
+              </Text>
+              <Text>
+                <strong>Diet Label:</strong>{" "}
                 {hit.recipe.dietLabels && hit.recipe.dietLabels.length > 0
-                  ? hit.recipe.dietLabels.join(', ')
-                  : 'N/A'}
-              </p>
-              <p>
-                <strong>Cautions:</strong>{' '}
+                  ? hit.recipe.dietLabels.join(", ")
+                  : "N/A"}
+              </Text>
+              <Text
+                borderRadius="lg"
+                backgroundColor={"red.500"}
+                color={"white"}
+              >
+                <strong>Cautions:</strong>{" "}
                 {hit.recipe.cautions && hit.recipe.cautions.length > 0
-                  ? hit.recipe.cautions.join(', ')
-                  : 'None'}
-              </p>
-              <p>
-                <strong>Dish Type:</strong>{' '}
+                  ? hit.recipe.cautions.join(", ")
+                  : "None"}
+              </Text>
+              <Text>
+                <strong>Dish Type:</strong>{" "}
                 {hit.recipe.dishType && hit.recipe.dishType.length > 0
-                  ? hit.recipe.dishType.join(', ')
-                  : 'N/A'}
-              </p>
+                  ? hit.recipe.dishType.join(", ")
+                  : "N/A"}
+              </Text>
               <VeganChoice healthLabels={hit.recipe.healthLabels || []} />
-            </div>
-          </div>
+            </VStack>
+          </GridItem>
         ))}
-      </div>
-    </div>
+      </Grid>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </VStack>
   );
 };
