@@ -1,4 +1,3 @@
-
 import { Select, Box } from "@chakra-ui/react";
 
 export const DietFilter = ({ dietFilter, onDietFilterChange }) => {
