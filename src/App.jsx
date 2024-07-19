@@ -1,16 +1,14 @@
-import { data } from './utils/data';
-import { RecipeListPage } from './pages/RecipeListPage';
-import { RecipePage } from './pages/RecipePage';
-import { useState, useEffect } from 'react';
+import { data } from "./utils/data";
+import { RecipeListPage } from "./pages/RecipeListPage";
+import { RecipePage } from "./pages/RecipePage";
+import { useState } from "react";
+import { Box } from "@chakra-ui/react";
 
 export const App = () => {
-
-
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(''); 
-  const [dietFilter, setDietFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dietFilter, setDietFilter] = useState("");
 
-  // Your state code here
   const handleSearchQueryChange = (query) => {
     setSearchQuery(query);
   };
@@ -18,20 +16,35 @@ export const App = () => {
     setDietFilter(diet);
   };
 
-  const filteredRecipes = data.hits.filter((hit) =>
-    hit.recipe.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    hit.recipe.healthLabels.some((label) =>
-      label.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredRecipes = data.hits
+    .filter(
+      (hit) =>
+        hit.recipe.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        hit.recipe.healthLabels.some((label) =>
+          label.toLowerCase().includes(searchQuery.toLowerCase())
+        )
     )
-  ).filter((hit) => {
-    if (!dietFilter) return true; // If no diet filter is selected, include all recipes
-    return hit.recipe.healthLabels.includes(dietFilter); // Otherwise, only include recipes that match the diet filter
-  });
-  
+    .filter((hit) => {
+      if (!dietFilter) return true;
+      return hit.recipe.healthLabels.includes(dietFilter);
+    });
+
   return (
-    <div>
+    <Box
+      className="App"
+      bg="blue.500"
+      minH="100vh"
+      minWidth={"100%"}
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+    >
       {selectedRecipe ? (
-       <RecipePage recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />
+        <RecipePage
+          recipe={selectedRecipe}
+          onBack={() => setSelectedRecipe(null)}
+        />
       ) : (
         <RecipeListPage
           recipes={filteredRecipes}
@@ -42,6 +55,6 @@ export const App = () => {
           onDietFilterChange={handleDietFilterChange}
         />
       )}
-    </div>
+    </Box>
   );
 };
